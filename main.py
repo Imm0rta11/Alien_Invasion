@@ -138,6 +138,8 @@ class AlienInvation:
 
             sleep(0.5)
         else:
+            self.game_stat.ships_left = 3
+            self.score_board.prep_star_ships()
             pygame.mouse.set_visible(True)
             self.game_stat.game_active = False
 
