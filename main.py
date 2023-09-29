@@ -27,6 +27,7 @@ class AlienInvation:
         self.quit_button = Button(self, 'Quit', (self.screen_rect.centerx, self.screen_rect.centery + 120))
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+        self.help_ = False
 
         self._create_fleet()
 
@@ -52,6 +53,7 @@ class AlienInvation:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
+                self._check_help_button(mouse_pos)
                 self._check_quit_button(mouse_pos)
 
     def _check_keydown_event(self, event):
@@ -91,7 +93,13 @@ class AlienInvation:
                 self.star_ship.center_ship()
 
     def _check_help_button(self, mouse_pos):
-        pass
+        if self.help_button.rect.collidepoint(mouse_pos):
+            button_clicked = self.help_button.rect.collidepoint(mouse_pos)
+            if button_clicked and not self.game_stat.game_active:
+                if not self.help_:
+                    self.help_ = True
+                else:
+                    self.help_ = False
 
     def _check_quit_button(self, mouse_pos):
         if self.quit_button.rect.collidepoint(mouse_pos):
@@ -199,6 +207,26 @@ class AlienInvation:
         self.game_title_rect.center = (self.screen_rect.centerx, self.screen_rect.centery - 120)
         self.screen.blit(self.game_title, self.game_title_rect)
 
+    def _draw_help_game(self):
+        self.font = pygame.font.SysFont(None, 34)
+        self.font_big = pygame.font.SysFont(None, 48)
+        self.help_text = self.font.render('Your task in this game is to shoot down the invaders until they capture all three of your fleets', True, (0, 0, 0), self.settings.bg_color)
+        self.help_control_shoot = self.font_big.render('Spase - shoot', True, (0, 0, 0), self.settings.bg_color)
+        self.help_control_left = self.font_big.render('< - left', True, (0, 0, 0), self.settings.bg_color)
+        self.help_control_right = self.font_big.render('right - >', True, (0, 0, 0), self.settings.bg_color)
+        self.help_control_shoot_rect = self.help_control_shoot.get_rect()
+        self.help_control_left_rect = self.help_control_left.get_rect()
+        self.help_control_right_rect = self.help_control_right.get_rect()
+        self.help_text_rect = self.help_text.get_rect()
+        self.help_text_rect.center = (self.screen_rect.centerx, self.screen_rect.centery + 198)
+        self.help_control_right_rect.center = (self.screen_rect.centerx + 500, self.screen_rect.centery + 250)
+        self.help_control_left_rect.center = (self.screen_rect.centerx - 500, self.screen_rect.centery + 250)
+        self.help_control_shoot_rect.center = (self.screen_rect.centerx, self.screen_rect.centery + 250)
+        self.screen.blit(self.help_text, self.help_text_rect)
+        self.screen.blit(self.help_control_right, self.help_control_right_rect)
+        self.screen.blit(self.help_control_left, self.help_control_left_rect)
+        self.screen.blit(self.help_control_shoot, self.help_control_shoot_rect)
+
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self.score_board.show_score()
@@ -211,6 +239,8 @@ class AlienInvation:
             self.play_button.draw_button()
             self.help_button.draw_button()
             self.quit_button.draw_button()
+            if self.help_:
+                self._draw_help_game()
         pygame.display.flip()
 
 
